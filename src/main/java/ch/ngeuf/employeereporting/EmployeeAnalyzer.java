@@ -53,10 +53,7 @@ public class EmployeeAnalyzer {
       double expectedMin = averageSalary * PERCENTAGE_MINIMUM;
       double expectedMax = averageSalary * PERCENTAGE_MAXIMUN;
 
-      if (manager.salary() < expectedMin) {
-        issues.add(new ManagerSalaryIssue(manager, expectedMin, expectedMax,
-            manager.salary(), averageSalary));
-      } else if (manager.salary() > expectedMax) {
+      if (manager.salary() < expectedMin || manager.salary() > expectedMax) {
         issues.add(new ManagerSalaryIssue(manager, expectedMin, expectedMax,
             manager.salary(), averageSalary));
       }
@@ -70,32 +67,34 @@ public class EmployeeAnalyzer {
     Map<String, Integer> reportingLineCache = new HashMap<>();
 
     for (Employee employee : employees.values()) {
-      int lineLength = calculateReportingLineLength(employee, employees, reportingLineCache);
+      int lineLength = 0;
+      Employee current = employee;
+
+      // Iteratively traverse up the management chain
+      while (current != null) {
+        // Check cache first
+        if (reportingLineCache.containsKey(current.id())) {
+          lineLength += reportingLineCache.get(current.id());
+          break;
+        }
+
+        if (current.managerId() == null || current.managerId().isEmpty()) {
+          // Reached CEO (no manager)
+          break;
+        }
+
+        lineLength++;
+        current = employees.get(current.managerId());
+      }
+
+      // Cache the result for this employee
+      reportingLineCache.put(employee.id(), lineLength);
+
       if (lineLength > 4) {
         issues.add(new ReportingLineIssue(employee, lineLength));
       }
     }
 
     return issues;
-  }
-
-  private int calculateReportingLineLength(Employee employee, Map<String, Employee> employees,
-                                           Map<String, Integer> cache) {
-    if (employee.managerId() == null || employee.managerId().isEmpty()) {
-      return 0; // CEO has no managers
-    }
-
-    if (cache.containsKey(employee.id())) {
-      return cache.get(employee.id());
-    }
-
-    Employee manager = employees.get(employee.managerId());
-    if (manager == null) {
-      return 0; // Invalid manager reference
-    }
-
-    int length = 1 + calculateReportingLineLength(manager, employees, cache);
-    cache.put(employee.id(), length);
-    return length;
   }
 }
