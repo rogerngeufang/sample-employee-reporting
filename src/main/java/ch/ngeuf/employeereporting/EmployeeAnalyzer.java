@@ -6,59 +6,22 @@ import java.util.List;
 import java.util.Map;
 
 public class EmployeeAnalyzer {
-  public static class ManagerSalaryIssue {
-    private final Employee manager;
-    private final double expectedMin;
-    private final double expectedMax;
-    private final double currentSalary;
-    private final double averageSubordinateSalary;
 
-    public ManagerSalaryIssue(Employee manager, double expectedMin, double expectedMax,
-                              double currentSalary, double averageSubordinateSalary) {
-      this.manager = manager;
-      this.expectedMin = expectedMin;
-      this.expectedMax = expectedMax;
-      this.currentSalary = currentSalary;
-      this.averageSubordinateSalary = averageSubordinateSalary;
-    }
+  public static final double PERCENTAGE_MINIMUM = 1.2; // min 20%
+  public static final double PERCENTAGE_MAXIMUN = 1.5; // max 50%
 
-    public Employee getManager() {
-      return manager;
-    }
-
-    public double getExpectedMin() {
-      return expectedMin;
-    }
-
-    public double getExpectedMax() {
-      return expectedMax;
-    }
-
-    public double getCurrentSalary() {
-      return currentSalary;
-    }
-
-    public double getAverageSubordinateSalary() {
-      return averageSubordinateSalary;
-    }
+  public record ManagerSalaryIssue(
+      Employee manager,
+      double expectedMin,
+      double expectedMax,
+      double currentSalary,
+      double averageSubordinateSalary) {
   }
 
-  public static class ReportingLineIssue {
-    private final Employee employee;
-    private final int reportingLineLength;
-
-    public ReportingLineIssue(Employee employee, int reportingLineLength) {
-      this.employee = employee;
-      this.reportingLineLength = reportingLineLength;
-    }
-
-    public Employee getEmployee() {
-      return employee;
-    }
-
-    public int getReportingLineLength() {
-      return reportingLineLength;
-    }
+  public record ReportingLineIssue(
+      Employee employee,
+      int reportingLineLength
+  ) {
   }
 
   public List<ManagerSalaryIssue> analyzeManagerSalaries(Map<String, Employee> employees) {
@@ -87,8 +50,8 @@ public class EmployeeAnalyzer {
           .average()
           .orElse(0);
 
-      double expectedMin = averageSalary * 1.2;
-      double expectedMax = averageSalary * 1.5;
+      double expectedMin = averageSalary * PERCENTAGE_MINIMUM;
+      double expectedMax = averageSalary * PERCENTAGE_MAXIMUN;
 
       if (manager.salary() < expectedMin) {
         issues.add(new ManagerSalaryIssue(manager, expectedMin, expectedMax,

@@ -15,8 +15,8 @@ public class App {
 
     try {
       Path filePath = Path.of(args[0]);
-      EmployeeParser parser = new EmployeeParser();
-      EmployeeAnalyzer analyzer = new EmployeeAnalyzer();
+      var parser = new EmployeeParser();
+      var analyzer = new EmployeeAnalyzer();
 
       Map<String, Employee> employees = parser.parseEmployees(filePath);
 
@@ -42,15 +42,15 @@ public class App {
     }
 
     for (EmployeeAnalyzer.ManagerSalaryIssue issue : issues) {
-      Employee manager = issue.getManager();
-      if (issue.getCurrentSalary() < issue.getExpectedMin()) {
-        double difference = issue.getExpectedMin() - issue.getCurrentSalary();
+      Employee manager = issue.manager();
+      if (issue.currentSalary() < issue.expectedMin()) {
+        double difference = issue.expectedMin() - issue.currentSalary();
         System.out.printf("%s (ID: %s) earns %.2f less than they should (average subordinate salary: %.2f)%n",
-            manager.fullName(), manager.id(), difference, issue.getAverageSubordinateSalary());
+            manager.fullName(), manager.id(), difference, issue.averageSubordinateSalary());
       } else {
-        double difference = issue.getCurrentSalary() - issue.getExpectedMax();
+        double difference = issue.currentSalary() - issue.expectedMax();
         System.out.printf("%s (ID: %s) earns %.2f more than they should (average subordinate salary: %.2f)%n",
-            manager.fullName(), manager.id(), difference, issue.getAverageSubordinateSalary());
+            manager.fullName(), manager.id(), difference, issue.averageSubordinateSalary());
       }
     }
   }
@@ -62,9 +62,9 @@ public class App {
     }
 
     for (EmployeeAnalyzer.ReportingLineIssue issue : issues) {
-      Employee employee = issue.getEmployee();
+      Employee employee = issue.employee();
       System.out.printf("%s (ID: %s) has %d managers above them (max allowed is 4)%n",
-          employee.fullName(), employee.id(), issue.getReportingLineLength());
+          employee.fullName(), employee.id(), issue.reportingLineLength());
     }
   }
 }

@@ -22,8 +22,8 @@ class EmployeeAnalyzerTest {
     List<EmployeeAnalyzer.ManagerSalaryIssue> issues = analyzer.analyzeManagerSalaries(employees);
 
     assertEquals(1, issues.size());
-    assertEquals("Manager Jones", issues.getFirst().getManager().fullName());
-    assertTrue(issues.getFirst().getCurrentSalary() < issues.getFirst().getExpectedMin());
+    assertEquals("Manager Jones", issues.getFirst().manager().fullName());
+    assertTrue(issues.getFirst().currentSalary() < issues.getFirst().expectedMin());
   }
 
   @Test
@@ -40,7 +40,7 @@ class EmployeeAnalyzerTest {
     List<EmployeeAnalyzer.ReportingLineIssue> issues = analyzer.analyzeReportingLines(employees);
 
     assertEquals(1, issues.size());
-    assertEquals("L5 Black", issues.getFirst().getEmployee().fullName());
-    assertEquals(5, issues.getFirst().getReportingLineLength());
+    assertEquals("L5 Black", issues.getFirst().employee().fullName());
+    assertEquals(5, issues.getFirst().reportingLineLength());
   }
 }
